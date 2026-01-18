@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Город: Московский | Исторический Гид</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f0f0f;
+            color: #e5e5e5;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, .font-display {
+            font-family: 'Unbounded', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0f0f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ccff00;
+        }
+
+        .text-neon {
+            color: #ccff00;
+        }
+        
+        .bg-neon {
+            background-color: #ccff00;
+        }
+
+        .border-neon {
+            border-color: #ccff00;
+        }
+
+        
+        /* Audio Wave Animation - Удалена, так как заменена прогресс-баром */
+        
+        .map-container {
+            height: 500px;
+            width: 100%;
+            z-index: 10;
+        }
+
+        /* Hide Leaflet default attribution for cleaner look (optional, strictly speaking should be kept) */
+        .leaflet-control-attribution {
+            font-size: 10px;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold tracking-tighter uppercase">
+                Мой Город<span class="text-neon">.</span>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-semibold uppercase tracking-widest text-gray-400">
+                <a href="#hero" class="hover:text-neon transition">Главная</a>
+                <a href="#map-section" class="hover:text-neon transition">Карта</a>
+                <a href="#stories" class="hover:text-neon transition">Истории</a>
+                <a href="#about" class="hover:text-neon transition">О проекте</a>
+            </div>
+            <button class="md:hidden text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden bg-black border-t border-white/10 p-4 absolute w-full">
+            <a href="#hero" class="block py-2 text-gray-400 hover:text-neon">Главная</a>
+            <a href="#map-section" class="block py-2 text-gray-400 hover:text-neon">Карта</a>
+            <a href="#stories" class="block py-2 text-gray-400 hover:text-neon">Истории</a>
+            <a href="#about" class="block py-2 text-gray-400 hover:text-neon">О проекте</a>
+        </div>
+    </nav>
+
+    <header id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0 opacity-40">
+            <img src="https://cdn.mskguru.ru/uploads/flats/3253/kvartry-v-pervyj-moskovskij-gorod-park-1493841857.5639_.jpg?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="City Texture" class="w-full h-full object-cover grayscale">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-black/50 to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 container mx-auto px-6 text-center">
+            <div class="inline-block px-4 py-1 mb-6 border border-neon rounded-full text-xs font-bold uppercase tracking-widest text-neon">
+                Интерактивный лонгрид
+            </div>
+            <!-- ИЗМЕНЕНИЕ: Уменьшил размер шрифта для мобильных (text-3xl) и планшетов (sm:text-5xl), на ПК осталось (md:text-8xl) -->
+            <h1 class="text-3xl sm:text-5xl md:text-8xl font-black mb-6 leading-tight uppercase break-words">
+                Московский:<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">История за фасадом</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+                Привычные улицы хранят сотни скрытых историй. Мы собрали карту мест, о которых молчат путеводители.
+                Узнай, где ты живешь на самом деле.
+            </p>
+            <a href="#map-section" class="inline-flex items-center gap-2 bg-neon text-black px-8 py-4 rounded-none font-bold uppercase tracking-widest hover:bg-white transition transform hover:-translate-y-1">
+                Открыть карту <i data-lucide="map-pin" class="w-5 h-5"></i>
+            </a>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-gray-500">
+            <i data-lucide="arrow-down" class="w-8 h-8"></i>
+        </div>
+    </header>
+
+    <section class="py-20 bg-[#0f0f0f]">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-6 uppercase">Больше, чем просто <br><span class="text-neon">торговые центры</span></h2>
+                    <p class="text-gray-400 mb-6 text-lg leading-relaxed">
+                        Сегодня город Московский — это огромная территория, покрытая лесом и новостройками. 
+                        Но мало кто знает, что это место имеет глубокую историю, которая формировала судьбы людей.
+                    </p>
+                    <p class="text-gray-400 text-lg leading-relaxed">
+                        Наш проект — это попытка переосмыслить пространство вокруг. Мы не про скучные даты, мы про вайб места, про корни и про то, как прошлое прорастает в настоящее.
+                    </p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-neon opacity-20 blur-xl rounded-lg"></div>
+                    <div class="relative bg-gray-900 p-8 border border-white/10 rounded-lg">
+                        <div class="flex items-start gap-4 mb-6">
+                            <i data-lucide="quote" class="text-neon w-10 h-10 flex-shrink-0"></i>
+                            <p class="italic text-xl">"Более 90% молодых россиян считают изучение истории важным. Это не просто статистика, это поиск себя."</p>
+                        </div>
+                        <div class="text-right text-sm text-gray-500 font-mono">— По данным ТАСС, 2025</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="map-section" class="py-10 bg-black relative">
+        <div class="container mx-auto px-6 mb-8 flex flex-col md:flex-row justify-between items-end">
+            <div>
+                <h2 class="text-4xl font-bold uppercase mb-2">Карта мест</h2>
+                <p class="text-gray-400">Кликни на точку, чтобы узнать историю.</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex gap-2">
+                <span class="flex items-center gap-2 text-xs uppercase tracking-widest text-gray-500"><span class="w-3 h-3 bg-neon rounded-full"></span> История</span>
+                <span class="flex items-center gap-2 text-xs uppercase tracking-widest text-gray-500"><span class="w-3 h-3 bg-blue-500 rounded-full"></span> Природа</span>
+            </div>
+        </div>
+        
+        <div class="w-full h-[60vh] md:h-[700px] relative">
+            <div id="map" class="w-full h-full grayscale invert-[.9]"></div>
+            
+            <div class="absolute bottom-6 left-6 z-[1000] bg-black/90 p-6 max-w-sm border-l-4 border-neon hidden md:block backdrop-blur-sm">
+                <h4 class="text-neon font-bold uppercase mb-2">Навигация</h4>
+                <p class="text-sm text-gray-300">Используй зум, чтобы рассмотреть улицы. Каждая точка — это фото, аудиогид и уникальная история.</p>
+            </div>
+        </div>
+    </section>
+
+<section id="stories" class="py-24 bg-[#0f0f0f]">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl md:text-6xl font-bold mb-20 text-center uppercase">Архив <span class="text-neon">Историй</span></h2>
+
+        <div id="story-agro" class="flex flex-col md:flex-row gap-12 mb-32 items-center">
+            <div class="w-full md:w-1/2 relative group cursor-pointer">
+                <div class="absolute inset-0 bg-neon opacity-0 group-hover:opacity-10 transition duration-500"></div>
+                <img src="https://portal26km.ru/upload/iblock/180/1808f369ae1d9d8498dae682e77841ef.jpg" alt="Greenhouse" class="w-full h-[400px] object-cover grayscale group-hover:grayscale-0 transition duration-500 rounded-lg shadow-2xl">
+                <div class="absolute bottom-4 left-4 bg-black px-3 py-1 text-xs font-mono uppercase text-white">Фото: 1970-е (Реконструкция)</div>
+            </div>
+            <div class="w-full md:w-1/2">
+                <div class="text-neon font-mono mb-4">#01 | ПРОМЫШЛЕННОСТЬ</div>
+                <h3 class="text-3xl font-bold mb-6">Агрокомбинат: Начало</h3>
+                <p class="text-gray-400 mb-6 leading-relaxed">
+                    Все началось здесь. Город вырос вокруг гигантских теплиц, которые кормили столицу. 
+                    Это не просто стекло и бетон, это история трудовых династий и амбициозного советского проекта. 
+                    Знаете ли вы, что технология освещения теплиц создавала то самое знаменитое "свечение" над городом?
+                </p>
+                
+                <audio id="audio-agro" src="agrokombinat_story.mp3"></audio> 
+                <div class="bg-gray-900 p-4 rounded border border-white/10 flex items-center gap-4">
+                    <button class="w-10 h-10 rounded-full bg-neon text-black flex items-center justify-center hover:scale-105 transition" onclick="toggleAudio(this, 'audio-agro')">
+                        <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                    </button>
+                    <div class="flex-1">
+                        <div class="text-xs text-gray-500 uppercase mb-1">Аудиогид</div>
+                        <div id="progress-bar-container-agro" class="h-1 bg-gray-700 rounded-full cursor-pointer relative" onclick="seekAudio(event, 'audio-agro')">
+                            <div id="audio-progress-agro" class="h-full w-0 bg-white absolute top-0 left-0"></div>
+                        </div>
+                    </div>
+                    <div id="audio-time-agro" class="text-xs font-mono text-neon">00:00 / 00:00</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="story-selo" class="flex flex-col md:flex-row gap-12 mb-32 items-center">
+            <div class="w-full md:w-1/2 grid grid-cols-2 gap-4">
+                <div class="relative group">
+                    <img src="peredeltsy-1.jpg" 
+                        alt="Село Передельцы фото 1" 
+                        class="w-full h-[400px] object-cover grayscale group-hover:grayscale-0 transition duration-500 rounded-lg shadow-xl">
+                </div>
+                <div class="relative group">
+                    <img src="peredeltsy-2.jpg" 
+                        alt="Село Передельцы фото 2" 
+                        class="w-full h-[400px] object-cover grayscale group-hover:grayscale-0 transition duration-500 rounded-lg shadow-xl">
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/2">
+                <div class="text-neon font-mono mb-4">#02 | ИСТОРИЯ</div>
+                <h3 class="text-3xl font-bold mb-6">Село Передельцы</h3>
+                <div class="space-y-4 text-gray-400 leading-relaxed">
+                    <p>
+                        Московский город появился там, где раньше было старинное село Передельцы, чья история насчитывала свыше четырех столетий до восемнадцатого века. 
+                    </p>
+                    <p>
+                        Его судьба переплелась с историей России, включая множество известных людей и важных происшествий. Одним из тех, кто владел селом, был Владимир Сергеевич Толстой, который служил в кавалергардах и входил в Северное общество декабристов. 
+                    </p>
+                    <p>
+                        Владимир Сергеевич Толстой приходится дальним родственником Льву Николаевичу Толстому, так как их деды были двоюродными братьями.
+                    </p>
+                    <p>
+                        Мемориал воинам в Передельцах, что сейчас является частью города Московский в Новой Москве, представляет собой воинское захоронение. Изначально его поставили в 1959 году как общую могилу для пятнадцатидесяти трёх солдат Красной Армии, скончавшихся в местном госпитале в период с 1941 по 1942 год.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="story-park" class="flex flex-col md:flex-row-reverse gap-12 mb-32 items-center">
+            <div class="w-full md:w-1/2 relative group">
+                <video 
+                    src="ulianovskiy_park.mp4" 
+                    poster="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                    controls 
+                    class="w-full h-[400px] object-cover rounded-lg shadow-2xl transition duration-500 border border-white/10"
+                >
+                    Ваш браузер не поддерживает тег video.
+                </video>
+            </div>
+            <div class="w-full md:w-1/2">
+                <div class="text-blue-500 font-mono mb-4">#03 | ПРИРОДА</div>
+                <h3 class="text-3xl font-bold mb-6">Ульяновский лесопарк</h3>
+                <p class="text-gray-400 mb-6 leading-relaxed">
+                    Легкие города и место древних троп. Здесь не просто деревья — это экосистема, которая помнит времена до застройки. Мы нашли точки, где сохранились столетние дубы.
+                </p>
+                <div class="grid grid-cols-3 gap-2">
+                    <img src="tropa.jpg?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="h-20 w-full object-cover rounded opacity-60 hover:opacity-100 transition cursor-pointer">
+                    <img src="dubpeskova.jpg?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="h-20 w-full object-cover rounded opacity-60 hover:opacity-100 transition cursor-pointer">
+                    <img src="tropa2.jpg?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="h-20 w-full object-cover rounded opacity-60 hover:opacity-100 transition cursor-pointer">
+                </div>
+            </div>
+        </div>
+<div id="story-center" class="flex flex-col md:flex-row gap-12 items-center">
+    
+    <!-- ЛЕВАЯ ЧАСТЬ: ФОТО + ПОДПИСЬ -->
+    <div class="w-full md:w-1/2">
+        <div class="relative overflow-hidden rounded-lg shadow-2xl border border-white/10">
+            <img 
+                src="karta.jpg" 
+                alt="Границы города Московский на карте 1766 года"
+                class="w-full h-[400px] object-cover"
+            >
+        </div>
+
+        <!-- ТЕКСТ ПОД ФОТО (НЕ ТРОНУТ) -->
+        <div class="mt-4 text-center text-gray-300 font-mono">
+            <i data-lucide="map" class="mx-auto mb-2 w-8 h-8"></i>
+            ГРАНИЦЫ ГОРОДА МОСКОВСКИЙ НА КАРТЕ<br>1766 ГОД
+        </div>
+    </div>
+
+    <!-- ПРАВАЯ ЧАСТЬ: ТЕКСТ (НЕ МЕНЯЛ) -->
+    <div class="w-full md:w-1/2">
+        <div class="text-neon font-mono mb-4">#04 | КУЛЬТУРА</div>
+        <h3 class="text-3xl font-bold mb-6">
+            Исторические места с 17 века. Образование города Московский
+        </h3>
+        <p class="text-gray-400 mb-6 leading-relaxed">
+    Документы из архивов убедительно показывают, что с семнадцатого по двадцатый век на месте нынешнего города Московский находились крупное село Передельцы (известное как «Передельцова», «Переделиц» и прочее) и маленькое село Передельцы. В иные времена село также называли «Большой Переделец» (вероятно, для отличия от села с тем же названием, где жило всего несколько дворов). С 1613 по 1764 год эти оба поселения числились за Троице Сергеевой Лаврой. Позже, в 1764 году, села передали под управление государства, и жители стали именоваться «экономическими крестьянами» (то есть свободными людьми, платившими налог деньгами властям). При этом Передельцы сформировали одно крестьянское сообщество с селами Саларьево и Дудкино, и так существовали, пока общину не начали разрушать в недавнее время. В двадцатом веке деревня была полностью стерта с лица земли из-за постройки поселка Московский, а от села сохранилось лишь кладбище, остатки фундамента церкви (храм снесли в 1941 году) и пара домиков у границ кладбища.
+        </p>
+    </div>
+
+</div>
+
+<style>
+    /* ===== АНИМАЦИИ ОТКРЫТИЯ / ЗАКРЫТИЯ ===== */
+
+    .overlay-enter {
+        animation: overlayFadeIn 0.6s ease forwards;
+    }
+
+    .overlay-exit {
+        animation: overlayFadeOut 0.5s ease forwards;
+    }
+
+    @keyframes overlayFadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes overlayFadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+
+    .video-enter {
+        animation: videoZoomIn 0.6s ease forwards;
+    }
+
+    .video-exit {
+        animation: videoZoomOut 0.5s ease forwards;
+    }
+
+    @keyframes videoZoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.85);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes videoZoomOut {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.85);
+        }
+    }
+
+    /* ===== ЧТОБЫ НИЧЕГО НЕ БЫЛО ВИДНО ПОД ОВЕРЛЕЕМ ===== */
+    body.video-open {
+        overflow: hidden;
+    }
+</style>
+
+<style> @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } } .animated-gradient { background: linear-gradient( 120deg, #00ff9c, #000000, #ffffff, #00ff9c ); background-size: 300% 300%; animation: gradientMove 12s ease infinite; } </style> <div class="bg-gray-900 p-6 rounded border-l-2 border-neon"> <h5 class="text-white font-bold mb-2">Факт дня:</h5> <p class="text-sm text-gray-400"> Ранее на месте города Московский были теплицы, которые в 2018 году превратились в агрохолдинг, которому исполнилось 50 лет; мэр Москвы Собянин лично посетил этот агрокомбинат. </p> <!-- КНОПКА --> <button id="openVideo" class="mt-4 text-xs font-bold uppercase text-neon hover:text-white flex items-center gap-1"> Смотреть видео <i data-lucide="arrow-right" class="w-4 h-4"></i> </button> </div> <!-- FULLSCREEN VIDEO OVERLAY --> <div id="videoOverlay" class="fixed inset-0 animated-gradient flex items-center justify-center z-50 hidden"> <div class="relative w-full h-full flex items-center justify-center"> <!-- КНОПКА ЗАКРЫТЬ --> <button id="closeVideo" class="absolute top-6 right-6 text-white text-sm font-bold uppercase hover:text-neon"> ✕ Закрыть </button> <!-- ВИДЕО --> <video <video id="videoPlayer" class="max-w-[90%] max-h-[90%] rounded-2xl shadow-[0_0_60px_rgba(0,255,156,0.35)] border border-white/20 backdrop-blur-md bg-black/40" controls> <script> let audioContext; let analyser; let source; let dataArray; function initAudioReactiveGradient() { audioContext = new (window.AudioContext || window.webkitAudioContext)(); analyser = audioContext.createAnalyser(); analyser.fftSize = 64; source = audioContext.createMediaElementSource(video); source.connect(analyser); analyser.connect(audioContext.destination); dataArray = new Uint8Array(analyser.frequencyBinCount); function animate() { analyser.getByteFrequencyData(dataArray); // средняя громкость const volume = dataArray.reduce((a, b) => a + b, 0) / dataArray.length; // реакция градиента overlay.style.backgroundSize = ${300 + volume}% ${300 + volume}%; overlay.style.filter = brightness(${1 + volume / 300}); requestAnimationFrame(animate); } animate(); } openBtn.addEventListener("click", () => { overlay.classList.remove("hidden"); video.play(); if (!audioContext) { initAudioReactiveGradient(); } else { audioContext.resume(); } }); closeBtn.addEventListener("click", () => { overlay.classList.add("hidden"); video.pause(); video.currentTime = 0; if (audioContext) { audioContext.suspend(); } }); </script> <!-- 🔽🔽🔽 ВОТ СЮДА ВСТАВЛЯЕШЬ СВОЙ ФАЙЛ 🔽🔽🔽 --> <source src="1216 (1)-копия.mp4" type="video/mp4"> Ваш браузер не поддерживает видео. </video> </div> </div> <script>
+    const openBtn = document.getElementById("openVideo");
+    const closeBtn = document.getElementById("closeVideo");
+    const overlay = document.getElementById("videoOverlay");
+    const video = document.getElementById("videoPlayer");
+
+    openBtn.addEventListener("click", () => {
+        document.body.classList.add("video-open");
+
+        overlay.classList.remove("hidden", "overlay-exit");
+        overlay.classList.add("overlay-enter");
+
+        video.classList.remove("video-exit");
+        video.classList.add("video-enter");
+
+        video.play();
+    });
+
+    closeBtn.addEventListener("click", () => {
+        overlay.classList.remove("overlay-enter");
+        overlay.classList.add("overlay-exit");
+
+        video.classList.remove("video-enter");
+        video.classList.add("video-exit");
+
+        setTimeout(() => {
+            overlay.classList.add("hidden");
+            document.body.classList.remove("video-open");
+            video.pause();
+            video.currentTime = 0;
+        }, 500);
+    });
+</script>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <section id="about" class="py-20 bg-black border-t border-white/10">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold mb-12 uppercase text-center">О проекте</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-[#0f0f0f] p-6 rounded hover:bg-gray-900 transition duration-300">
+                    <i data-lucide="target" class="text-neon w-8 h-8 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Цель</h4>
+                    <p class="text-sm text-gray-400">Создать интерактивный мост между прошлым и будущим, показав молодежи ценность места, где они живут.</p>
+                </div>
+
+                <div class="bg-[#0f0f0f] p-6 rounded hover:bg-gray-900 transition duration-300">
+                    <i data-lucide="users" class="text-neon w-8 h-8 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Аудитория</h4>
+                    <p class="text-sm text-gray-400">Молодежь 18-24 лет. Студенты, новые жители города, урбанисты и искатели локальной идентичности.</p>
+                </div>
+
+                <div class="bg-[#0f0f0f] p-6 rounded hover:bg-gray-900 transition duration-300">
+                    <i data-lucide="smartphone" class="text-neon w-8 h-8 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Формат</h4>
+                    <p class="text-sm text-gray-400">Лонгрид + Карта. Адаптировано для смартфонов. Видео, аудио, короткие тексты.</p>
+                </div>
+
+                <div class="bg-[#0f0f0f] p-6 rounded hover:bg-gray-900 transition duration-300">
+                    <i data-lucide="trending-up" class="text-neon w-8 h-8 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Перспективы</h4>
+                    <p class="text-sm text-gray-400">Расширение до уровня региона, добавление AR-функций и интеграция с соцсетями.</p>
+                </div>
+            </div>
+
+            <div class="mt-16 border border-white/10 rounded overflow-hidden">
+                <details class="group">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 bg-gray-900 hover:bg-gray-800 transition">
+                        <span class="uppercase tracking-widest text-sm">Источники и Исследования</span>
+                        <span class="transition group-open:rotate-180">
+                            <i data-lucide="chevron-down"></i>
+                        </span>
+                    </summary>
+                    <div class="text-gray-400 text-sm p-6 bg-[#0f0f0f] space-y-4">
+                        <p>Проект основан на актуальных исследованиях (2023-2025):</p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li><strong>ВЦИОМ:</strong> “Ценности молодёжи” — интерес к пониманию своего места в обществе.</li>
+                            <li><strong>ТАСС (2025):</strong> 90% молодежи считают историю важной.</li>
+                            <li><strong>R. Rodela et al. (2025):</strong> Партисипативная картография для молодежи.</li>
+                            <li><strong>K. Kasemsarn (2025):</strong> Цифровой сторителлинг в туризме.</li>
+                            <li><strong>Historic England:</strong> Кейс «People of Jane Pit» — вовлечение в индустриальное наследие.</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-black py-12 border-t border-white/10 text-center">
+        <div class="container mx-auto px-6">
+            <div class="text-2xl font-bold uppercase mb-4 tracking-tighter">Мой Город<span class="text-neon">.</span></div>
+            <p class="text-gray-500 text-sm mb-8">Исследуй. Узнавай. Сохраняй.</p>
+            
+<div class="flex justify-center mb-8">
+    <a href="#top" class="transition">
+        <img 
+            src="dvoretskulturimoscovski.png" 
+            alt="Дворец культуры Московский"
+            class="h-20 w-auto hover:opacity-80 transition"
+        >
+    </a>
+</div>
+
+            
+            <div class="text-xs text-gray-600 font-mono">
+                &copy; 2025 Проект "Мой город: исторический гид". Все права защищены.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        lucide.createIcons();
+
+        // Центр Московского (примерные координаты)
+        const map = L.map('map').setView([55.595, 37.355], 14);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        const neonIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: "<div style='background-color:#ccff00; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 10px #ccff00; border: 2px solid white;'></div>",
+            iconSize: [12, 12],
+            iconAnchor: [6, 6]
+        });
+
+        const blueIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: "<div style='background-color:#3b82f6; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 10px #3b82f6; border: 2px solid white;'></div>",
+            iconSize: [12, 12],
+            iconAnchor: [6, 6]
+        });
+
+        const locations = [
+            { coords: [55.595, 37.355], title: "Агрокомбинат (История)", id: "story-agro", type: 'history' },
+            { coords: [55.590, 37.340], title: "Ульяновский лесопарк", id: "story-park", type: 'nature' },
+            { coords: [55.600, 37.360], title: "Центральная площадь", id: "story-center", type: 'history' }
+        ];
+
+        locations.forEach(loc => {
+            const marker = L.marker(loc.coords, { icon: loc.type === 'history' ? neonIcon : blueIcon }).addTo(map);
+            
+            marker.bindPopup(`
+                <div style="font-family: 'Inter'; color: #000;">
+                    <strong style="text-transform:uppercase;">${loc.title}</strong><br>
+                    <button onclick="scrollToId('${loc.id}')" style="margin-top:5px; background: #000; color: #ccff00; border:none; padding: 4px 8px; font-size: 10px; font-weight: bold; cursor: pointer;">ЧИТАТЬ</button>
+                </div>
+            `);
+        });
+
+        // Scroll Helper
+        function scrollToId(id) {
+            const element = document.getElementById(id);
+            if(element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        
+        // Вспомогательная функция для форматирования времени (секунды -> MM:SS)
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '00:00';
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min < 10 ? '0' : ''}${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        // Главная функция для переключения воспроизведения
+        function toggleAudio(btn, audioId) {
+            const audio = document.getElementById(audioId);
+            const storyName = audioId.split('-')[1];
+            const progressEl = document.getElementById(`audio-progress-${storyName}`);
+            const timeEl = document.getElementById(`audio-time-${storyName}`);
+            const playIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play w-4 h-4 fill-current"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>';
+            const pauseIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pause w-4 h-4 fill-current"><rect x="14" y="4" width="4" height="16" rx="1" /><rect x="6" y="4" width="4" height="16" rx="1" /></svg>';
+
+            // Инициализация отображения времени после загрузки метаданных
+            audio.onloadedmetadata = function() {
+                timeEl.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+            };
+
+            if (audio.paused) {
+                // Воспроизведение
+                audio.play();
+                btn.classList.add('playing');
+                btn.innerHTML = pauseIcon;
+                
+                // Обновление времени и прогресса
+                audio.ontimeupdate = function() {
+                    const percentage = (audio.currentTime / audio.duration) * 100;
+                    progressEl.style.width = `${percentage}%`;
+                    timeEl.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+                };
+                
+                audio.onended = function() {
+                    btn.classList.remove('playing');
+                    btn.innerHTML = playIcon;
+                    progressEl.style.width = '0%';
+                    audio.currentTime = 0;
+                };
+
+            } else {
+                // Пауза
+                audio.pause();
+                btn.classList.remove('playing');
+                btn.innerHTML = playIcon;
+            }
+        }
+
+        // Функция для перемотки по клику
+        function seekAudio(event, audioId) {
+            const audio = document.getElementById(audioId);
+            const storyName = audioId.split('-')[1];
+            const container = document.getElementById(`progress-bar-container-${storyName}`);
+            
+            const rect = container.getBoundingClientRect();
+            const clickX = event.clientX - rect.left; // Смещение клика от начала контейнера
+            const width = container.clientWidth; // Общая ширина контейнера
+            
+            const percentage = clickX / width;
+            const newTime = percentage * audio.duration;
+            
+            // Проверка, что аудио загружено и имеет продолжительность
+            if (isFinite(audio.duration)) {
+                audio.currentTime = newTime;
+            }
+        }
+
+
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const hero = document.querySelector('header img');
+            if(hero) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+    </script>
+</body>
+</html>
