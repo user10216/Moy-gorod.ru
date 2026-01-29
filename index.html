@@ -361,7 +361,77 @@
     }
 </style>
 
-<style> @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } } .animated-gradient { background: linear-gradient( 120deg, #00ff9c, #000000, #ffffff, #00ff9c ); background-size: 300% 300%; animation: gradientMove 12s ease infinite; } </style> <div class="bg-gray-900 p-6 rounded border-l-2 border-neon"> <h5 class="text-white font-bold mb-2">Факт дня:</h5> <p class="text-sm text-gray-400"> Ранее на месте города Московский были теплицы, которые в 2018 году превратились в агрохолдинг, которому исполнилось 50 лет; мэр Москвы Собянин лично посетил этот агрокомбинат. </p> <!-- КНОПКА --> <button id="openVideo" class="mt-4 text-xs font-bold uppercase text-neon hover:text-white flex items-center gap-1"> Смотреть видео <i data-lucide="arrow-right" class="w-4 h-4"></i> </button> </div> <!-- FULLSCREEN VIDEO OVERLAY --> <div id="videoOverlay" class="fixed inset-0 animated-gradient flex items-center justify-center z-50 hidden"> <div class="relative w-full h-full flex items-center justify-center"> <!-- КНОПКА ЗАКРЫТЬ --> <button id="closeVideo" class="absolute top-6 right-6 text-white text-sm font-bold uppercase hover:text-neon"> ✕ Закрыть </button> <!-- ВИДЕО --> <video <video id="videoPlayer" class="max-w-[90%] max-h-[90%] rounded-2xl shadow-[0_0_60px_rgba(0,255,156,0.35)] border border-white/20 backdrop-blur-md bg-black/40" controls> <script> let audioContext; let analyser; let source; let dataArray; function initAudioReactiveGradient() { audioContext = new (window.AudioContext || window.webkitAudioContext)(); analyser = audioContext.createAnalyser(); analyser.fftSize = 64; source = audioContext.createMediaElementSource(video); source.connect(analyser); analyser.connect(audioContext.destination); dataArray = new Uint8Array(analyser.frequencyBinCount); function animate() { analyser.getByteFrequencyData(dataArray); // средняя громкость const volume = dataArray.reduce((a, b) => a + b, 0) / dataArray.length; // реакция градиента overlay.style.backgroundSize = ${300 + volume}% ${300 + volume}%; overlay.style.filter = brightness(${1 + volume / 300}); requestAnimationFrame(animate); } animate(); } openBtn.addEventListener("click", () => { overlay.classList.remove("hidden"); video.play(); if (!audioContext) { initAudioReactiveGradient(); } else { audioContext.resume(); } }); closeBtn.addEventListener("click", () => { overlay.classList.add("hidden"); video.pause(); video.currentTime = 0; if (audioContext) { audioContext.suspend(); } }); </script> <!-- 🔽🔽🔽 ВОТ СЮДА ВСТАВЛЯЕШЬ СВОЙ ФАЙЛ 🔽🔽🔽 --> <source src="1216 (1)-копия.mp4" type="video/mp4"> Ваш браузер не поддерживает видео. </video> </div> </div> <script>
+<style> @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } } .animated-gradient { background: linear-gradient( 120deg, #00ff9c, #000000, #ffffff, #00ff9c ); background-size: 300% 300%; animation: gradientMove 12s ease infinite; } </style> <div class="bg-gray-900 p-6 rounded border-l-2 border-neon"> <h5 class="text-white font-bold mb-2">Факт дня:</h5> <p class="text-sm text-gray-400"> Ранее на месте города Московский были теплицы, которые в 2018 году превратились в агрохолдинг, которому исполнилось 50 лет; мэр Москвы Собянин лично посетил этот агрокомбинат. </p> <!-- КНОПКА --> <button id="openVideo" class="mt-4 text-xs font-bold uppercase text-neon hover:text-white flex items-center gap-1"> Смотреть видео <i data-lucide="arrow-right" class="w-4 h-4"></i> </button> </div> <div id="story-salaryevo" class="mt-32 relative">
+    
+    <div class="absolute -left-20 top-0 w-96 h-96 bg-neon opacity-5 blur-[120px] pointer-events-none rounded-full"></div>
+
+    <div class="flex flex-col md:flex-row gap-12 items-start">
+        
+        <div class="w-full md:w-5/12 sticky top-24">
+            <div class="relative group overflow-hidden rounded-2xl border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                <img 
+                    src="5456533432067362228 (1).jpg" 
+                    alt="Памятный крест 1812 года" 
+                    class="w-full h-[600px] object-cover grayscale group-hover:grayscale-0 transition duration-700 ease-in-out transform group-hover:scale-105"
+                >
+                
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+                
+                <div class="absolute bottom-6 left-6 right-6">
+                    <div class="inline-block px-3 py-1 mb-2 border border-neon/50 bg-black/50 backdrop-blur-md rounded text-[10px] font-mono uppercase text-neon tracking-widest">
+                        Локация: Саларьево
+                    </div>
+                    <p class="text-white text-sm font-light opacity-90">Черный мраморный крест на месте братской могилы</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full md:w-7/12">
+            
+            <div class="flex items-center gap-3 mb-6">
+                <span class="h-px w-8 bg-neon"></span>
+                <span class="text-neon font-mono text-sm tracking-widest">#05 | ПАМЯТЬ</span>
+            </div>
+
+            <h3 class="text-3xl md:text-5xl font-black mb-8 leading-tight font-display text-white uppercase">
+                Эхо 1812 года: <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-600">Тишина Саларьево</span>
+            </h3>
+
+            <div class="bg-[#1a1a1a] p-8 rounded-2xl border border-white/5 shadow-xl relative overflow-hidden">
+                <i data-lucide="feather" class="absolute top-6 right-6 text-white/5 w-24 h-24 rotate-12"></i>
+
+                <div class="space-y-6 text-gray-400 text-lg leading-relaxed font-light relative z-10">
+                    <p>
+                        <span class="text-white font-semibold">Тихое место, здесь, в Саларьево…</span> Под сенью деревьев скрывается братская могила – это безмолвное напоминание о страшных днях 1812 года, отголосок вторжения наполеоновской армии.
+                    </p>
+                    
+                    <p>
+                        Здесь нашли свой последний приют местные жители, ставшие жертвами жестокости солдат, ведомых честолюбивым императором. История этого захоронения – это история не только утраты, но и стойкости.
+                    </p>
+
+                    <div class="pl-6 border-l-2 border-neon my-8 py-2 bg-white/5 rounded-r-lg">
+                        <p class="text-gray-200 italic text-base">
+                            "Само место упокоения отмечено черным каменным крестом, отполированным до блеска. Этот крест – не просто памятник, это символ веры и надежды..."
+                        </p>
+                    </div>
+
+                    <p>
+                        Изящный венок из искусственных цветов у подножия говорит о том, что подвиг не забыт. Это место, где можно остановиться и задуматься о цене мира и хрупкости человеческой жизни.
+                    </p>
+
+                    <p class="text-sm pt-4 border-t border-white/10 text-gray-500">
+                        По весне, когда тает снег, сюда приходят люди разных поколений. Уход за крестом, свежие венки и свечи — простые, но важные обряды, превращающие память в поступки.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+
+            </div>
+        </div>
+    </div>
+</div> <!-- FULLSCREEN VIDEO OVERLAY --> <div id="videoOverlay" class="fixed inset-0 animated-gradient flex items-center justify-center z-50 hidden"> <div class="relative w-full h-full flex items-center justify-center"> <!-- КНОПКА ЗАКРЫТЬ --> <button id="closeVideo" class="absolute top-6 right-6 text-white text-sm font-bold uppercase hover:text-neon"> ✕ Закрыть </button> <!-- ВИДЕО --> <video <video id="videoPlayer" class="max-w-[90%] max-h-[90%] rounded-2xl shadow-[0_0_60px_rgba(0,255,156,0.35)] border border-white/20 backdrop-blur-md bg-black/40" controls> <script> let audioContext; let analyser; let source; let dataArray; function initAudioReactiveGradient() { audioContext = new (window.AudioContext || window.webkitAudioContext)(); analyser = audioContext.createAnalyser(); analyser.fftSize = 64; source = audioContext.createMediaElementSource(video); source.connect(analyser); analyser.connect(audioContext.destination); dataArray = new Uint8Array(analyser.frequencyBinCount); function animate() { analyser.getByteFrequencyData(dataArray); // средняя громкость const volume = dataArray.reduce((a, b) => a + b, 0) / dataArray.length; // реакция градиента overlay.style.backgroundSize = ${300 + volume}% ${300 + volume}%; overlay.style.filter = brightness(${1 + volume / 300}); requestAnimationFrame(animate); } animate(); } openBtn.addEventListener("click", () => { overlay.classList.remove("hidden"); video.play(); if (!audioContext) { initAudioReactiveGradient(); } else { audioContext.resume(); } }); closeBtn.addEventListener("click", () => { overlay.classList.add("hidden"); video.pause(); video.currentTime = 0; if (audioContext) { audioContext.suspend(); } }); </script> <!-- 🔽🔽🔽 ВОТ СЮДА ВСТАВЛЯЕШЬ СВОЙ ФАЙЛ 🔽🔽🔽 --> <source src="1216 (1)-копия.mp4" type="video/mp4"> Ваш браузер не поддерживает видео. </video> </div> </div> <script>
     const openBtn = document.getElementById("openVideo");
     const closeBtn = document.getElementById("closeVideo");
     const overlay = document.getElementById("videoOverlay");
@@ -394,6 +464,103 @@
         }, 500);
     });
 </script>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-24 bg-black relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-neon opacity-5 blur-[120px] rounded-full"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 bg-blue-500 opacity-5 blur-[150px] rounded-full"></div>
+
+    <div class="container mx-auto px-6">
+        <div class="max-w-4xl mb-16">
+            <div class="inline-block px-4 py-1 mb-6 border border-neon/30 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-neon">
+                Архивные исследования
+            </div>
+            <h2 class="text-3xl md:text-5xl font-black leading-tight uppercase font-display text-white">
+                Средневековый Московский – <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">монастырский след</span>
+            </h2>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-12 items-start">
+            
+            <div class="lg:col-span-5 space-y-8 sticky top-24">
+                <div class="relative group overflow-hidden rounded-2xl border border-white/10 shadow-[0_0_40px_rgba(204,255,0,0.05)]">
+                    <div class="absolute inset-0 border-2 border-neon/0 group-hover:border-neon/40 transition-all duration-700 z-10 pointer-events-none"></div>
+                    
+                    <img 
+                        src="5467861614468991973.jpg" 
+                        alt="Архивная карта владений" 
+                        class="w-full h-auto grayscale group-hover:grayscale-0 transition duration-1000 ease-in-out transform group-hover:scale-105"
+                    >
+                    
+                    <div class="absolute top-4 left-4 z-20">
+                        <div class="bg-black/70 backdrop-blur-md border border-white/10 px-3 py-1 rounded text-[10px] font-mono text-neon uppercase tracking-tighter">
+                            Doc_ID: 1766_MAP
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8 bg-gray-900/40 border-l-4 border-neon backdrop-blur-sm rounded-r-xl">
+                    <p class="text-xl italic text-gray-300 leading-relaxed">
+                        "Территория современного поселения Московский в Средневековье входила в состав обширных церковных владений."
+                    </p>
+                </div>
+                
+                <div class="hidden lg:block text-gray-600 font-mono text-xs space-y-4 uppercase tracking-widest pl-2">
+                    <p class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-neon rounded-full"></span> Археологические слои</p>
+                    <p class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-neon rounded-full"></span> Акты 1626 года</p>
+                    <p class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-neon rounded-full"></span> Реформа 1764 года</p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7">
+                <div class="grid md:grid-cols-2 gap-8 text-gray-400 leading-relaxed text-sm">
+                    
+                    <div class="space-y-4 group">
+                        <div class="flex items-center gap-4">
+                            <span class="text-neon font-mono text-lg">01.</span>
+                            <h4 class="text-white font-bold uppercase tracking-wider">Загадка истоков</h4>
+                        </div>
+                        <p>Вопрос о «самом древнем» событии края остаётся центральным для историка — ответ на него складывается из археологии и документов. Археология позволяет заглянуть в далёкое прошлое, но её возможности ограничены: современные постройки и частная собственность перекрывают доступ к древним селищам.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <span class="text-neon font-mono text-lg">02.</span>
+                            <h4 class="text-white font-bold uppercase tracking-wider">Утраченные акты</h4>
+                        </div>
+                        <p>Письменные источники могли бы заполнить пробелы, однако большая часть актов датируется последними четырьмя веками. В 1626 году пожар в Москве уничтожил множество хозяйственных бумаг — для исследователя это утрата целого пласта информации.</p>
+                    </div>
+
+                    <div class="md:col-span-2 p-8 bg-white/[0.03] border border-white/10 rounded-2xl hover:border-neon/30 transition-all duration-500 shadow-xl">
+                        <h4 class="text-white font-bold uppercase tracking-wider mb-4 flex items-center gap-3 text-neon">
+                            <i data-lucide="library" class="w-5 h-5"></i>
+                            Монастырские архивы
+                        </h4>
+                        <p class="mb-4">В нашем крае главными собственниками были <span class="text-white font-semibold">Троице-Сергиева лавра</span> и <span class="text-white font-semibold">Чудов монастырь Кремля</span>. Чудовская вотчина тянулась вдоль Калужской дороги — от Десны до Ракиток, охватывая Марьино, Голенищево и земли нынешнего аэропорта Внуково. Румянцево также входило в её владения.</p>
+                        <p>Схожая ситуация у Лавры: Саларьево было передано монастырю в годы опричнины, но в бумагах сохранились указания на прежних хозяев — Дудкина и Картмазова.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <span class="text-neon font-mono text-lg">03.</span>
+                            <h4 class="text-white font-bold uppercase tracking-wider">Экономические крестьяне</h4>
+                        </div>
+                        <p>Резкая перемена наступила в 1764 году: Екатерина II изъяла церковные земли. Крестьян отнесли к «экономическим» — их правовой статус был выше обычных крепостных, чья зависимость сохранялась ещё сто лет.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <span class="text-neon font-mono text-lg">04.</span>
+                            <h4 class="text-white font-bold uppercase tracking-wider">Итог</h4>
+                        </div>
+                        <p class="italic border-t border-white/10 pt-4">Прошлое Московского — это слоистая мозаика. Сегодня мы ступаем по земле, соединяя фрагменты, восстанавливая картину, где каждая деревня и каждый документ важны для понимания истории.</p>
+                    </div>
 
                 </div>
             </div>
