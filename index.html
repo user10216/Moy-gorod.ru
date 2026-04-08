@@ -808,6 +808,27 @@
 
     <footer class="bg-black py-12 border-t border-white/10 text-center">
         <div class="container mx-auto px-6">
+<div class="mb-10 max-w-3xl mx-auto">
+    <div class="bg-[#0f0f0f] border border-white/10 rounded-2xl p-6 md:p-7 relative overflow-hidden shadow-2xl">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-neon opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+
+        <div class="flex items-start gap-4 relative z-10">
+            <i data-lucide="message-circle-quote" class="text-neon w-8 h-8 mt-1 flex-shrink-0"></i>
+            <div class="text-left">
+                <div class="inline-block px-3 py-1 mb-3 rounded-full border border-neon/30 text-[10px] font-bold uppercase tracking-[0.2em] text-neon">
+                    Экспертное мнение
+                </div>
+                <p class="text-gray-300 text-sm md:text-base leading-relaxed italic">
+                    «Этот проект настоящая находка для тех, кто готов погрузиться в историю города «Московский». Лонгрид не просто собрал все исторические факты о малоизвестных уголках города, но и упаковал их в современный визуальный формат, заставив нашу молодежь смотреть на привычные улицы с неподдельным интересом и чувством гордости.»
+                </p>
+                <p class="mt-4 text-xs md:text-sm text-gray-500 font-mono">
+                    — Тимофеева Маргарита Владимировна, специалист по связям с общественностью.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
             <div class="text-2xl font-bold uppercase mb-4 tracking-tighter">Мой Город<span class="text-neon">.</span></div>
             <p class="text-gray-500 text-sm mb-8">Исследуй. Узнавай. Сохраняй.</p>
             
@@ -856,24 +877,54 @@
             iconAnchor: [6, 6]
         });
 
-        const locations = [
-            { coords: [55.595, 37.355], title: "Агрокомбинат (История)", id: "story-agro", type: 'history' },
-            { coords: [55.592099, 37.374794], title: "Ульяновский лесопарк", id: "story-park", type: 'nature' },
-            { coords: [55.602150, 37.346997], title: "Центральная площадь", id: "story-center", type: 'history' },
-            { coords: [55.582660, 37.374327], title: "Пионерлагерь имени Ю.А. Гагарина", id: "story-gagarin" },
-            { coords: [55.573719, 37.354043], title: "Усадьба Валуево", id: "story-valuevo", type: 'history'}
-        ];
+    const locations = [
+        {
+            coords: [55.595, 37.355],
+            title: "Агрокомбинат (История)",
+            id: "story-agro",
+            type: "history",
+            description: "Это целый комплекс теплиц, где выращивают овощи и зелень, обеспечивая город свежими продуктами."
+        },
+        {
+            coords: [55.592099, 37.374794],
+            title: "Ульяновский лесопарк",
+            id: "story-park",
+            type: "nature",
+            description: "Лесопарк расположен прямо рядом с городом. Здесь царит тишина, протоптаны тропы вдоль рек, и создаётся ощущение, что неожиданно выбрался из суеты мегаполиса в природу."
+        },
+        {
+            coords: [55.602150, 37.346997],
+            title: "Центральная площадь",
+            id: "story-center",
+            type: "history",
+            description: "Сердце города, место, где собираются люди, проходят события, и складывается живая атмосфера повседневной жизни."
+        },
+        {
+            coords: [55.582660, 37.374327],
+            title: "Пионерлагерь имени Ю.А. Гагарина",
+            id: "story-gagarin",
+            description: "Это место с историей, где до сих пор чувствуется дух советских каникул и детских приключений, знакомых многим с детства."
+        },
+        {
+            coords: [55.573719, 37.354043],
+            title: "Усадьба Валуево",
+            id: "story-valuevo",
+            type: "history",
+            description: "Здесь можно пройтись по липовым аллеям, увидеть пруды и ощутить, будто оказался в кадре исторического фильма."
+        }
+    ];
 
-        locations.forEach(loc => {
-            const marker = L.marker(loc.coords, { icon: loc.type === 'history' ? neonIcon : blueIcon }).addTo(map);
-            
-            marker.bindPopup(`
-                <div style="font-family: 'Inter'; color: #000;">
-                    <strong style="text-transform:uppercase;">${loc.title}</strong><br>
-                    <button onclick="scrollToId('${loc.id}')" style="margin-top:5px; background: #000; color: #ccff00; border:none; padding: 4px 8px; font-size: 10px; font-weight: bold; cursor: pointer;">ЧИТАТЬ</button>
-                </div>
-            `);
-        });
+    locations.forEach(loc => {
+        const marker = L.marker(loc.coords, { icon: loc.type === 'history' ? neonIcon : blueIcon }).addTo(map);
+
+        marker.bindPopup(`
+            <div style="font-family: 'Inter'; color: #000;">
+                <strong style="text-transform:uppercase;">${loc.title}</strong><br>
+                <p class="text-gray-400 text-sm mb-4 leading-relaxed">${loc.description}</p>
+                <button onclick="scrollToId('${loc.id}')" style="margin-top:5px; background: #000; color: #ccff00; border:none; padding: 4px 8px; font-size: 10px; font-weight: bold; cursor: pointer;">ЧИТАТЬ</button>
+            </div>
+        `);
+    });
 
         // Scroll Helper
         function scrollToId(id) {
